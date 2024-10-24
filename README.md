@@ -3,7 +3,7 @@
 
 <p align="left"> <img src="https://komarev.com/ghpvc/?username=dris1153&label=Profile%20views&color=0e75b6&style=flat" alt="dris1153" /> </p>
 
-<p align="left"> <a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=dris1153" alt="dris1153" /></a> </p>
+<p align="left"> <a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=dris1153&title=-Reviews,-Followers,-Stars,-Issues,-PullRequest" alt="dris1153" /></a> </p>
 
 <p align="left"> <a href="https://twitter.com/drakin7290" target="blank"><img src="https://img.shields.io/twitter/follow/drakin7290?logo=twitter&style=for-the-badge" alt="drakin7290" /></a> </p>
 
