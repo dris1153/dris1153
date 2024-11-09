@@ -22,6 +22,6 @@
 
 <br clear="both">
 
-<img src="https://raw.githubusercontent.com/dris1153/dris1153/output/snake.svg" alt="Snake animation" />
+  <img alt="github-snake" src="https://raw.githubusercontent.com/dris1153/dris1153/output/github-snake.svg" />
 
 ###
