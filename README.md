@@ -5,8 +5,10 @@
 
 <p align="left"> <img src="https://komarev.com/ghpvc/?username=dris1153&label=Profile%20views&color=0e75b6&style=flat" alt="dris1153" /> </p>
 
-<p align="left"> <a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=dris1153&title=-Reviews,-Followers,-Stars,-Issues,-PullRequest" alt="dris1153" /></a> </p>
-
+<div align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=dris1153&hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=dracula&locale=en&hide_border=false&order=1" height="150" alt="stats graph"  />
+  <img src="https://github-readme-stats.vercel.app/api/top-langs?username=dris1153&locale=en&hide_title=false&layout=compact&card_width=320&langs_count=5&theme=dracula&hide_border=false&order=2" height="150" alt="languages graph"  />
+</div>
 
 
 <h3 align="left">Connect with me:</h3>
@@ -47,5 +49,7 @@
 </picture>
 
 ###
+
+
 
 
