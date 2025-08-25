@@ -45,8 +45,7 @@
 
 ###
 
-![dris1153's Stats](https://github-readme-stats.vercel.app/api?username=dris1153&theme=react&show_icons=true&hide_border=false&count_private=true)
-
+![dris1153's Stats](https://github-readme-stats.vercel.app/api?username=dris1153&theme=react&show_icons=true&hide_border=true&count_private=true)
 
 
 
