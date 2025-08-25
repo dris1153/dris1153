@@ -46,8 +46,8 @@
 ###
 
 <div style="display: flex; gap: 8px">
-  ![dris1153's Stats](https://github-readme-stats.vercel.app/api?username=dris1153&theme=react&show_icons=true&hide_border=true&count_private=true)
-  ![dris1153's Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=dris1153&theme=react&show_icons=true&hide_border=true&layout=compact)
+![dris1153's Stats](https://github-readme-stats.vercel.app/api?username=dris1153&theme=react&show_icons=true&hide_border=true&count_private=true)
+![dris1153's Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=dris1153&theme=react&show_icons=true&hide_border=true&layout=compact)
 </div>
 
 
