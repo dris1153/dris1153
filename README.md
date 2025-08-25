@@ -44,10 +44,8 @@
 </picture>
 
 ###
-<div style="display: flex; gap: 8px">
-  <img src="https://github-readme-stats.vercel.app/api?username=dris1153&theme=default&show_icons=true&hide_border=true&count_private=true" alt="dris1153's GitHub Stats" />
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=dris1153&theme=default&show_icons=true&hide_border=true&layout=compact" alt="dris1153's GitHub Stats" />
-</div>
+
+![dris1153's Stats](https://github-readme-stats.vercel.app/api?username=dris1153&theme=react&show_icons=true&hide_border=false&count_private=true)
 
 
 
