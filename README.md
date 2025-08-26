@@ -51,6 +51,8 @@
 
 <br clear="both">
 
-<iframe src="https://v0-tic-tac-toe-game-nine-sigma.vercel.app"></iframe>
+<div>
+  <iframe src='https://v0-tic-tac-toe-game-nine-sigma.vercel.app'></iframe>
+</div>
 
 
