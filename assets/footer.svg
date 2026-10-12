@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="180" viewBox="0 0 1200 180" role="img" aria-labelledby="title">
+  <title id="title">Thanks for stopping by — see you in the next commit</title>
+
+  <defs>
+    <clipPath id="frame">
+      <rect width="1200" height="180" rx="28"/>
+    </clipPath>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#070912"/>
+      <stop offset="1" stop-color="#0e1124"/>
+    </linearGradient>
+    <linearGradient id="wave-a" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a855f7" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity=".45"/>
+    </linearGradient>
+    <linearGradient id="wave-b" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f472b6" stop-opacity=".3"/>
+      <stop offset="1" stop-color="#a855f7" stop-opacity=".3"/>
+    </linearGradient>
+    <linearGradient id="wave-c" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#f472b6" stop-opacity=".22"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#c084fc" stop-opacity=".7"/>
+      <stop offset=".5" stop-color="#f472b6" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity=".7"/>
+    </linearGradient>
+    <!-- One 600px wavelength repeated, so sliding by 600px loops seamlessly -->
+    <path id="wave" d="M0 0Q150 -18 300 0T600 0T900 0T1200 0T1500 0T1800 0V200H0Z"/>
+  </defs>
+
+  <style>
+    .sans { font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Ubuntu, Arial, sans-serif; }
+    .mono { font-family: "SFMono-Regular", "JetBrains Mono", Consolas, "Liberation Mono", Menlo, monospace; }
+    .slow { animation: slide 14s linear infinite; }
+    .mid  { animation: slide 10s linear infinite reverse; }
+    .fast { animation: slide 7s linear infinite; }
+    @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-600px); } }
+    @media (prefers-reduced-motion: reduce) { .slow, .mid, .fast { animation: none; } }
+  </style>
+
+  <g clip-path="url(#frame)">
+    <rect width="1200" height="180" fill="url(#bg)"/>
+    <g transform="translate(0 124)"><use href="#wave" class="slow" fill="url(#wave-c)"/></g>
+    <g transform="translate(0 142)"><use href="#wave" class="mid" fill="url(#wave-b)"/></g>
+    <g transform="translate(0 160)"><use href="#wave" class="fast" fill="url(#wave-a)"/></g>
+
+    <text class="sans" x="600" y="60" text-anchor="middle" font-size="28" font-weight="700" fill="#f1f5f9">Thanks for stopping by ✦</text>
+    <text class="mono" x="600" y="92" text-anchor="middle" font-size="16" letter-spacing="2" fill="#94a3b8">see you in the next commit — dris1153</text>
+  </g>
+
+  <rect x=".75" y=".75" width="1198.5" height="178.5" rx="27.25" fill="none" stroke="url(#edge)" stroke-width="1.5"/>
+</svg>

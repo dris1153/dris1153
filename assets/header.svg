@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-labelledby="title desc">
+  <title id="title">Dris — Creative Developer</title>
+  <desc id="desc">Animated banner: Dris (Duong Minh Tien), a creative developer from Vietnam working on frontends, shaders, browser games and AI tooling.</desc>
+
+  <defs>
+    <clipPath id="frame">
+      <rect width="1200" height="400" rx="28"/>
+    </clipPath>
+
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#070912"/>
+      <stop offset="1" stop-color="#0e1124"/>
+    </linearGradient>
+
+    <radialGradient id="aurora-violet">
+      <stop offset="0" stop-color="#a855f7" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#a855f7" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="aurora-cyan">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity=".38"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="aurora-pink">
+      <stop offset="0" stop-color="#f472b6" stop-opacity=".32"/>
+      <stop offset="1" stop-color="#f472b6" stop-opacity="0"/>
+    </radialGradient>
+
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#ffffff" stroke-opacity=".06"/>
+    </pattern>
+    <radialGradient id="grid-fade" cx=".7" cy=".5" r=".75">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="grid-mask">
+      <rect width="1200" height="400" fill="url(#grid-fade)"/>
+    </mask>
+
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  .07 0 0 0 0"/>
+    </filter>
+
+    <!-- Name fill: a gradient that keeps sliding sideways -->
+    <linearGradient id="name-fill" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="520" y2="0" spreadMethod="reflect">
+      <stop offset="0" stop-color="#c084fc"/>
+      <stop offset=".5" stop-color="#f472b6"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+      <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="1040 0" dur="9s" repeatCount="indefinite"/>
+    </linearGradient>
+
+    <linearGradient id="globe-stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#c084fc"/>
+    </linearGradient>
+    <radialGradient id="globe-core">
+      <stop offset="0" stop-color="#a855f7" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#a855f7" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#c084fc" stop-opacity=".7"/>
+      <stop offset=".5" stop-color="#f472b6" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity=".7"/>
+    </linearGradient>
+
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <style>
+    .sans { font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Ubuntu, Arial, sans-serif; }
+    .mono { font-family: "SFMono-Regular", "JetBrains Mono", Consolas, "Liberation Mono", Menlo, monospace; }
+
+    .drift-a { animation: drift-a 16s ease-in-out infinite alternate; }
+    .drift-b { animation: drift-b 20s ease-in-out infinite alternate; }
+    .drift-c { animation: drift-c 13s ease-in-out infinite alternate; }
+    @keyframes drift-a { to { transform: translate(140px, 60px); } }
+    @keyframes drift-b { to { transform: translate(-180px, -40px); } }
+    @keyframes drift-c { to { transform: translate(90px, -70px); } }
+
+    .star { opacity: .15; animation: twinkle 3.2s ease-in-out infinite; }
+    @keyframes twinkle { 50% { opacity: 1; } }
+
+    .role { opacity: 0; animation: role 15s infinite; }
+    .role:nth-of-type(2) { animation-delay: 3s; }
+    .role:nth-of-type(3) { animation-delay: 6s; }
+    .role:nth-of-type(4) { animation-delay: 9s; }
+    .role:nth-of-type(5) { animation-delay: 12s; }
+    @keyframes role {
+      0%   { opacity: 0; transform: translateY(10px); }
+      3%   { opacity: 1; transform: translateY(0); }
+      17%  { opacity: 1; transform: translateY(0); }
+      20%  { opacity: 0; transform: translateY(-10px); }
+      100% { opacity: 0; }
+    }
+
+    .caret { animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .drift-a, .drift-b, .drift-c, .star, .caret { animation: none; }
+      .role { animation: none; }
+      .role:first-of-type { opacity: 1; }
+    }
+  </style>
+
+  <g clip-path="url(#frame)">
+    <!-- Backdrop -->
+    <rect width="1200" height="400" fill="url(#bg)"/>
+    <circle class="drift-a" cx="240" cy="80" r="320" fill="url(#aurora-violet)"/>
+    <circle class="drift-b" cx="1000" cy="320" r="340" fill="url(#aurora-cyan)"/>
+    <circle class="drift-c" cx="660" cy="420" r="260" fill="url(#aurora-pink)"/>
+    <rect width="1200" height="400" fill="url(#grid)" mask="url(#grid-mask)"/>
+    <rect width="1200" height="400" fill="#000" filter="url(#grain)"/>
+
+    <!-- Pixel stars -->
+    <g fill="#ffffff">
+      <rect class="star" x="612" y="62" width="5" height="5" style="animation-delay:.2s"/>
+      <rect class="star" x="748" y="342" width="4" height="4" style="animation-delay:1.1s"/>
+      <rect class="star" x="1128" y="54" width="5" height="5" style="animation-delay:.6s"/>
+      <rect class="star" x="1146" y="336" width="4" height="4" style="animation-delay:2s"/>
+      <rect class="star" x="702" y="128" width="3" height="3" style="animation-delay:1.6s"/>
+      <rect class="star" x="812" y="58" width="4" height="4" style="animation-delay:2.6s"/>
+      <rect class="star" x="1092" y="372" width="3" height="3" style="animation-delay:.9s"/>
+      <rect class="star" x="528" y="372" width="4" height="4" style="animation-delay:2.2s"/>
+      <rect class="star" x="1166" y="196" width="3" height="3" style="animation-delay:1.3s"/>
+    </g>
+
+    <!-- Wireframe globe: meridians squash and widen to fake a rotation -->
+    <g transform="translate(960 200)">
+      <circle r="150" fill="url(#globe-core)"/>
+      <g fill="none" stroke="url(#globe-stroke)" stroke-width="1.4" filter="url(#glow)">
+        <circle r="120" stroke-width="2"/>
+        <ellipse rx="120" ry="16" stroke-opacity=".9"/>
+        <ellipse cy="-48" rx="110" ry="14" stroke-opacity=".55"/>
+        <ellipse cy="48" rx="110" ry="14" stroke-opacity=".55"/>
+        <ellipse cy="-90" rx="79" ry="10" stroke-opacity=".4"/>
+        <ellipse cy="90" rx="79" ry="10" stroke-opacity=".4"/>
+        <g stroke-opacity=".75">
+          <ellipse ry="120" rx="120"><animate attributeName="rx" values="120;0;120" keyTimes="0;.5;1" calcMode="spline" keySplines=".12 0 .39 0;.61 1 .88 1" dur="12s" begin="0s" repeatCount="indefinite"/></ellipse>
+          <ellipse ry="120" rx="120"><animate attributeName="rx" values="120;0;120" keyTimes="0;.5;1" calcMode="spline" keySplines=".12 0 .39 0;.61 1 .88 1" dur="12s" begin="-2s" repeatCount="indefinite"/></ellipse>
+          <ellipse ry="120" rx="120"><animate attributeName="rx" values="120;0;120" keyTimes="0;.5;1" calcMode="spline" keySplines=".12 0 .39 0;.61 1 .88 1" dur="12s" begin="-4s" repeatCount="indefinite"/></ellipse>
+          <ellipse ry="120" rx="120"><animate attributeName="rx" values="120;0;120" keyTimes="0;.5;1" calcMode="spline" keySplines=".12 0 .39 0;.61 1 .88 1" dur="12s" begin="-6s" repeatCount="indefinite"/></ellipse>
+          <ellipse ry="120" rx="120"><animate attributeName="rx" values="120;0;120" keyTimes="0;.5;1" calcMode="spline" keySplines=".12 0 .39 0;.61 1 .88 1" dur="12s" begin="-8s" repeatCount="indefinite"/></ellipse>
+          <ellipse ry="120" rx="120"><animate attributeName="rx" values="120;0;120" keyTimes="0;.5;1" calcMode="spline" keySplines=".12 0 .39 0;.61 1 .88 1" dur="12s" begin="-10s" repeatCount="indefinite"/></ellipse>
+        </g>
+      </g>
+
+      <!-- Orbit with a satellite -->
+      <g transform="rotate(-18)">
+        <ellipse rx="178" ry="42" fill="none" stroke="#f472b6" stroke-opacity=".45" stroke-dasharray="3 7"/>
+        <circle r="5" fill="#f9a8d4" filter="url(#glow)">
+          <animateMotion dur="7s" repeatCount="indefinite" path="M-178 0A178 42 0 1 0 178 0A178 42 0 1 0 -178 0"/>
+        </circle>
+      </g>
+    </g>
+
+    <!-- Copy -->
+    <text class="mono" x="80" y="112" font-size="17" letter-spacing="6" fill="#22d3ee">HELLO, WORLD — I'M</text>
+    <text class="sans" x="74" y="212" font-size="112" font-weight="800" letter-spacing="-2" fill="url(#name-fill)">Dris<tspan fill="#f472b6">.</tspan></text>
+    <text class="sans" x="80" y="260" font-size="23" fill="#cbd5e1">Duong Minh Tien · Creative Developer · Vietnam</text>
+
+    <g class="mono" font-size="21">
+      <text x="80" y="326" fill="#f472b6">~/dris $</text>
+      <g fill="#e2e8f0">
+        <text class="role" x="196" y="326">building pixel-perfect UIs<tspan class="caret" fill="#22d3ee"> ▍</tspan></text>
+        <text class="role" x="196" y="326">writing GLSL shaders &amp; WebGL<tspan class="caret" fill="#22d3ee"> ▍</tspan></text>
+        <text class="role" x="196" y="326">making games for the browser<tspan class="caret" fill="#22d3ee"> ▍</tspan></text>
+        <text class="role" x="196" y="326">shipping AI agent skills<tspan class="caret" fill="#22d3ee"> ▍</tspan></text>
+        <text class="role" x="196" y="326">learning Rust, one crate at a time<tspan class="caret" fill="#22d3ee"> ▍</tspan></text>
+      </g>
+    </g>
+  </g>
+
+  <rect x=".75" y=".75" width="1198.5" height="398.5" rx="27.25" fill="none" stroke="url(#edge)" stroke-width="1.5"/>
+</svg>
