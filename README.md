@@ -6,7 +6,6 @@
   <a href="https://x.com/drakin7290"><img src="https://img.shields.io/badge/@drakin7290-000000?style=flat-square&logo=x&logoColor=white" alt="X / Twitter" /></a>
   <a href="https://dev.to/dris1153"><img src="https://img.shields.io/badge/dev.to-0A0A0A?style=flat-square&logo=devdotto&logoColor=white" alt="dev.to" /></a>
   <a href="https://orcid.org/0009-0003-8762-0607"><img src="https://img.shields.io/badge/ORCID-A6CE39?style=flat-square&logo=orcid&logoColor=white" alt="ORCID" /></a>
-  <img src="https://komarev.com/ghpvc/?username=dris1153&label=profile%20views&color=ff004d&style=flat-square" alt="Profile views" />
 </p>
 
 <img src="./assets/h-player.svg" height="45" alt="Player 1" />
@@ -109,6 +108,11 @@ Hi, I'm Tien — Dris on the internet. I'm a developer in Vietnam and I mostly b
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/dris1153/dris1153/output/github-snake-dark.svg" />
     <img src="https://raw.githubusercontent.com/dris1153/dris1153/output/github-snake.svg" width="100%" alt="A snake eating dris1153's contribution graph" />
   </picture>
+</p>
+
+<p align="center">
+  <img src="https://count.getloli.com/@dris1153.github?name=dris1153.github&theme=3d-num&padding=6&offset=0&align=top&scale=1&pixelated=1&darkmode=auto" height="48" alt="Visitor counter" /><br />
+  <sub>players so far</sub>
 </p>
 
 <img src="./assets/footer.svg" width="100%" alt="Thanks for playing! Insert coin to continue." />
