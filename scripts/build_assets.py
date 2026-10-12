@@ -374,7 +374,7 @@ SCROLL = ["000000.", "0777770", ".077770", ".077770", ".077770", "0000000"]
 TROPHY = ["0000000", "0aaaaa0", ".0aaa0.", "..0a0..", "..0a0..", ".00000."]
 
 HEADINGS = {
-    "h-player.svg": ("PLAYER 1", HEART),
+    "h-about.svg": ("ABOUT ME", HEART),
     "h-inventory.svg": ("INVENTORY", CHEST),
     "h-quests.svg": ("QUEST LOG", SCROLL),
     "h-scores.svg": ("HIGH SCORES", TROPHY),
