@@ -8,7 +8,7 @@
   <a href="https://orcid.org/0009-0003-8762-0607"><img src="https://img.shields.io/badge/ORCID-A6CE39?style=flat-square&logo=orcid&logoColor=white" alt="ORCID" /></a>
 </p>
 
-<img src="./assets/h-player.svg" height="45" alt="Player 1" />
+<img src="./assets/h-about.svg" height="45" alt="About me" />
 
 Hi, I'm Tien — Dris on the internet. I'm a developer in Vietnam and I mostly build things for the browser: the parts of the web that feel a little alive, like shaders, small games and tools that save someone an afternoon. Lately I've been writing a shader course, making Claude Code skills and picking up Rust.
 
