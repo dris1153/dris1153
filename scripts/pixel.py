@@ -163,3 +163,35 @@ def layer(build, cls="", style=""):
         return c.svg()
     attrs = (f' class="{cls}"' if cls else "") + (f' style="{style}"' if style else "")
     return f"<g{attrs}>{c.svg()}</g>"
+
+
+def timeline(name, points, period, base, delay=0, prop="opacity"):
+    """One step-end animation: points are (seconds, value) inside the period,
+    base is the value with no animation (reduced motion, static renderers)."""
+    frames, prev = [], None
+    for t, v in sorted(points):
+        if v != prev:
+            frames.append(f"{pct(t / period * 100)}%{{{prop}:{v}}}")
+            prev = v
+    return (f".{name}{{{prop}:{base};animation:{name} {period:g}s step-end infinite {delay:g}s}}"
+            f"@keyframes {name}{{{''.join(frames)}}}")
+
+
+def flipbook(name, frames, x, y, period, slots, delay=0, scale=1, anchor="center"):
+    """Frame 0 is the rest pose, shown whenever no slot is active (and with
+    reduced motion). slots: [(start_s, end_s, frame_index)] within period.
+    Other frames are centred on frame 0's box, or bottom-aligned to it.
+    Returns (layers, css)."""
+    w0, h0 = len(frames[0][0]), len(frames[0])
+    cuts = sorted({0} | {t for s, e, _ in slots for t in (s, e) if t < period})
+
+    def shown(t):
+        return next((k for s, e, k in slots if s <= t < e), 0)
+
+    layers, css = [], []
+    for k, rows in enumerate(frames):
+        dx = (w0 - len(rows[0])) // 2
+        dy = h0 - len(rows) if anchor == "bottom" else (h0 - len(rows)) // 2
+        layers.append(layer(lambda c, rows=rows, dx=dx, dy=dy: c.sprite(x + dx * scale, y + dy * scale, rows, scale), f"{name}{k}"))
+        css.append(timeline(f"{name}{k}", [(t, 1 if shown(t) == k else 0) for t in cuts], period, 1 if k == 0 else 0, delay))
+    return layers, "".join(css)

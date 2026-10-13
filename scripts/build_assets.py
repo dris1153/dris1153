@@ -8,7 +8,7 @@ hand-placed rects.
 """
 from pathlib import Path
 
-from pixel import MOON, Canvas, document, layer, text_width
+from pixel import CELL, MOON, Canvas, document, flipbook, layer, text_width, timeline
 
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
 
@@ -168,7 +168,11 @@ def header():
 
 # --- Section headings -----------------------------------------------------
 
-def heading(label, icon):
+ICON_PERIOD = 4.8
+
+
+def heading(label, frames, slots, delay, anchor="center"):
+    icon = frames[0]
     w = text_width(label) + 30
     H = 15
 
@@ -177,16 +181,41 @@ def heading(label, icon):
         c.rect(0, 1, w, H - 2, "0")
         c.rect(1, 1, w - 2, H - 2, "d")
         c.rect(2, 2, w - 4, H - 4, "1")
-        c.sprite(4, (H - len(icon)) // 2, icon)
         c.text(4 + len(icon[0]) + 4, 4, label, "7", shadow="0")
 
-    return document(w, H, label.title(), layer(plate))
+    icons, css = flipbook("ic", frames, 4, (H - len(icon)) // 2, ICON_PERIOD, slots, delay, anchor=anchor)
+    return document(w, H, label.title(), "\n".join([layer(plate)] + icons), css)
 
 
 # --- Footer ---------------------------------------------------------------
 
+COIN_SPIN = [
+    [".aa.", "a97a", "a97a", "a97a", "a99a", ".aa."],
+    [".a.", "a7a", "a9a", "a9a", "a9a", ".a."],
+    ["a", "7", "9", "9", "9", "a"],
+    [".a.", "a7a", "a9a", "a9a", "a9a", ".a."],
+]
+FOOTER_PERIOD = 16
+COUNTDOWN_S, GAME_OVER_S = 10, 12.5
+
+
+def blink(start, end, on=.4, off=.25):
+    """(t, opacity) points: visible-blinking from start to end, hidden elsewhere."""
+    points, t = [(0, 0)], start
+    while t < end:
+        points += [(t, 1), (min(t + on, end), 0)]
+        t += on + off
+    return points
+
+
 def footer():
     W, H = 300, 40
+    LINE_Y = 21
+    insert = "INSERT COIN TO CONTINUE"
+    prompt = "CONTINUE? "
+    over = "GAME OVER"
+    prompt_x = (W - text_width(prompt + "0")) // 2
+    digit_x = prompt_x + len(prompt) * 6
 
     def scene(c):
         c.rect(0, 0, W, H, "1")
@@ -196,43 +225,77 @@ def footer():
         line = "THANKS FOR PLAYING!"
         c.text((W - text_width(line, 2)) // 2, 4, line, "a", scale=2, shadow="2")
 
-    def coin(c):
-        line = "INSERT COIN TO CONTINUE"
-        c.text((W - text_width(line)) // 2, 21, line, "7")
+    def digits(c):
+        for n in range(10):
+            c.text(digit_x, LINE_Y + n * 8, str(9 - n), "7")
 
+    clip = (f'<clipPath id="digit"><rect x="{digit_x * CELL}" y="{LINE_Y * CELL}" '
+            f'width="{5 * CELL}" height="{7 * CELL}"/></clipPath>')
+    countdown = [(0, 1), (COUNTDOWN_S, 0)]
+    coin_layers, coin_css = flipbook("spin", COIN_SPIN, (W - text_width(insert)) // 2 - 9, LINE_Y, .6,
+                                     [(.15, .3, 1), (.3, .45, 2), (.45, .6, 3)])
     body = [
         layer(scene),
-        layer(coin, "blink"),
+        layer(lambda c: c.text((W - text_width(insert)) // 2, LINE_Y, insert, "7"), "insert"),
+        layer(lambda c: c.text((W - text_width(over)) // 2, LINE_Y, over, "8"), "over"),
+        f'<g class="prompt">{layer(lambda c: c.text(prompt_x, LINE_Y, prompt, "7"))}'
+        f'<g clip-path="url(#digit)">{layer(digits, "tick")}</g></g>',
+        *coin_layers,
         layer(lambda c: c.sprite(270, 12, CAT, scale=2)),
         layer(lambda c: c.sprite(282, 16, CAT_TAIL_A, scale=2), "frame-a"),
         layer(lambda c: c.sprite(282, 16, CAT_TAIL_B, scale=2), "frame-b"),
     ]
     style = (
-        ".blink{animation:blink 1.4s steps(1) infinite}@keyframes blink{50%{opacity:0}}"
-        ".frame-a{animation:frame 1.6s steps(1) infinite}"
+        timeline("insert", blink(GAME_OVER_S, FOOTER_PERIOD), FOOTER_PERIOD, 1)
+        + timeline("over", blink(COUNTDOWN_S, GAME_OVER_S), FOOTER_PERIOD, 0)
+        + timeline("prompt", countdown, FOOTER_PERIOD, 0)
+        + timeline("tick", [(n, f"translateY(-{n * 8 * CELL}px)") for n in range(10)], FOOTER_PERIOD,
+                   "translateY(0)", prop="transform")
+        + coin_css
+        + ".frame-a{animation:frame 1.6s steps(1) infinite}"
         ".frame-b{animation:frame 1.6s steps(1) infinite -.8s}"
         "@keyframes frame{0%{opacity:1}50%{opacity:0}}"
     )
-    return document(W, H, "Thanks for playing! Insert coin to continue", "\n".join(body), style)
+    return document(W, H, "Thanks for playing! Insert coin to continue", f"<defs>{clip}</defs>\n" + "\n".join(body), style)
 
 
-HEART = [".00.00.", "0880880", "0888880", ".08880.", "..080.."]
-SWORD = ["......00", ".....070", "....070.", "0..070..", ".0070...", "..00....", ".0.0....", "0......."]
-CHEST = [".000000.", "04444440", "00099000", "04494440", "04444440", "00000000"]
-SCROLL = ["000000.", "0777770", ".077770", ".077770", ".077770", "0000000"]
-TROPHY = ["0000000", "0aaaaa0", ".0aaa0.", "..0a0..", "..0a0..", ".00000."]
+HEART_FRAMES = [
+    [".00.00.", "0880880", "0888880", ".08880.", "..080.."],
+    [".000.000.", "088808880", "088888880", "088888880", ".0888880.", "..08880..", "...080..."],
+]
+_CHEST_BODY = ["00099000", "04494440", "04444440", "00000000"]
+CHEST_FRAMES = [
+    [".000000.", "04444440"] + _CHEST_BODY,
+    [".000000.", "04444440", "00000000", "01111110"] + _CHEST_BODY,
+    [".000000.", "04444440", "00000000", "011a9110"] + _CHEST_BODY,
+    [".00a900.", "044a9440", "00000000", "01111110"] + _CHEST_BODY,
+]
+_SCROLL = ["000000.", "0777770", ".077770", ".077770", ".077770", "0000000"]
+SCROLL_FRAMES = [
+    _SCROLL,
+    _SCROLL[:1] + ["0755570"] + _SCROLL[2:],
+    _SCROLL[:1] + ["0755570", ".077770", ".057770"] + _SCROLL[4:],
+    _SCROLL[:1] + ["0755570", ".077770", ".055570"] + _SCROLL[4:],
+]
+_TROPHY = ["0000000", "0aaaaa0", ".0aaa0.", "..0a0..", "..0a0..", ".00000."]
+TROPHY_FRAMES = [
+    _TROPHY,
+    ["0000000", "07aaaa0", ".0aaa0.", "..0a0..", "..0a0..", ".00000."],
+    ["0000000", "0aa7aa0", ".07aa0.", "..0a0..", "..0a0..", ".00000."],
+    ["0000000", "0aaaa70", ".0aa70.", "..070..", "..0a0..", ".00000."],
+]
 
 HEADINGS = {
-    "h-about.svg": ("ABOUT ME", HEART),
-    "h-inventory.svg": ("INVENTORY", CHEST),
-    "h-quests.svg": ("QUEST LOG", SCROLL),
-    "h-scores.svg": ("HIGH SCORES", TROPHY),
+    "h-about.svg": ("ABOUT ME", HEART_FRAMES, [(0, .15, 1), (.3, .45, 1)], 0),
+    "h-inventory.svg": ("INVENTORY", CHEST_FRAMES, [(0, .15, 1), (.15, .35, 2), (.35, .6, 3), (.6, .8, 1)], 1.2, "bottom"),
+    "h-quests.svg": ("QUEST LOG", SCROLL_FRAMES, [(0, .2, 1), (.2, .4, 2), (.4, .8, 3)], 2.4),
+    "h-scores.svg": ("HIGH SCORES", TROPHY_FRAMES, [(0, .2, 1), (.2, .4, 2), (.4, .6, 3)], 3.6),
 }
 
 if __name__ == "__main__":
     ASSETS.mkdir(exist_ok=True)
     (ASSETS / "header.svg").write_text(header())
     (ASSETS / "footer.svg").write_text(footer())
-    for name, (label, icon) in HEADINGS.items():
-        (ASSETS / name).write_text(heading(label, icon))
+    for name, args in HEADINGS.items():
+        (ASSETS / name).write_text(heading(*args))
     print("wrote", sorted(p.name for p in ASSETS.glob("*.svg")))
