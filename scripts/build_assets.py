@@ -304,7 +304,7 @@ def dialogue():
         f".next{{animation:next 1s steps(1) infinite {t - LINE_PAUSE:g}s backwards}}"
         "@keyframes next{0%{opacity:0}50%{opacity:1}}"
     )
-    title = "Tien says: " + " ".join(GREETING).title()
+    title = "Tien says: Hi, I'm Tien - Dris on the internet. Welcome to my corner of GitHub. Grab a snack and look around!"
     return document(W, H, title, f"<defs>{''.join(defs)}</defs>\n" + "\n".join(body), style)
 
 

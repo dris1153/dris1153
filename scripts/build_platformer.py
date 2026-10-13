@@ -43,6 +43,8 @@ Week = namedtuple("Week", "active total level")
 def calendar(doc):
     if doc.get("errors"):
         raise SystemExit(f"GraphQL errors: {doc['errors']}")
+    if not doc["data"]["user"]:
+        raise SystemExit("GitHub user not found")
     return doc["data"]["user"]["contributionsCollection"]["contributionCalendar"]
 
 
@@ -70,7 +72,9 @@ def weeks(cal):
             level=max(RANK[d["contributionLevel"]] for d in days),
         ))
     assert len(out) <= 54, len(out)
-    return out
+    # a rolling year spans 54 weeks when it starts on a Saturday; keep 53 so
+    # the flag area fits, dropping only that one-day partial week
+    return out[-53:]
 
 
 # --- Sprites (side view, facing right) ---------------------------------------
