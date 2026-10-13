@@ -1,7 +1,7 @@
 ---
 phase: 1
 title: "Extract shared pixel module"
-status: pending
+status: completed
 priority: P2
 effort: "0.5h"
 dependencies: []
@@ -49,8 +49,8 @@ Shared sprites stay in `build_assets.py` for now. Phase 2 moves `STAR`/`MOON` in
    - Run `grep -n "PAL\|FONT\|CELL" scripts/build_assets.py` to confirm no dangling references.
 
 ## Success Criteria
-- [ ] `git diff --exit-code assets/` passes after a rebuild.
-- [ ] `build_assets.py` has no engine code left. `pixel.py` does not import from `build_assets`.
+- [x] `git diff --exit-code assets/` passes after a rebuild.
+- [x] `build_assets.py` has no engine code left. `pixel.py` does not import from `build_assets`.
 
 ## Risk Assessment
 - Low. The only risk is a missed name, which shows up immediately as a `NameError` at build time.

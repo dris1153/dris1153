@@ -27,6 +27,9 @@ jobs:
       STATS_OPTIONS: show_icons=true&include_all_commits=true&rank_icon=github
       LANGS_OPTIONS: layout=compact&langs_count=8
     steps:
+      # build_platformer.py lives in this repo
+      - uses: actions/checkout@v4
+
       # README_STATS_TOKEN is an optional PAT (read:user + repo) that adds private
       # contributions; without it the cards fall back to public data only.
       - name: Stats card (dark)
@@ -61,15 +64,10 @@ jobs:
           path: dist/top-langs-light.svg
           token: ${{ secrets.README_STATS_TOKEN || secrets.GITHUB_TOKEN }}
 
-      # Runs after the card steps: snk is a Docker action running as root, so a
-      # dist/ it creates first is not writable by the later (non-root) steps.
-      - name: Generate contribution snake
-        uses: Platane/snk@v3
-        with:
-          github_user_name: ${{ github.repository_owner }}
-          outputs: |
-            dist/github-snake.svg?color_snake=#008751&color_dots=#ebedf0,#ffccaa,#ff77a8,#ff004d,#7e2553
-            dist/github-snake-dark.svg?palette=github-dark&color_snake=#00e436&color_dots=#161b22,#7e2553,#ff004d,#ffa300,#ffec27
+      - name: Build contribution platformer
+        run: python3 scripts/build_platformer.py --user ${{ github.repository_owner }} --out dist/platformer.svg
+        env:
+          GITHUB_TOKEN: ${{ secrets.README_STATS_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Publish to output branch
         uses: peaceiris/actions-gh-pages@v4

@@ -1,7 +1,7 @@
 ---
 phase: 5
 title: "Header life and about dialogue"
-status: pending
+status: completed
 priority: P2
 effort: "3h"
 dependencies: [4]
@@ -108,11 +108,11 @@ Add 4 small signs of life to the header scene, and a new RPG dialogue-box SVG fo
 5. Run `python3 scripts/build_assets.py` and commit the regenerated assets.
 
 ## Success Criteria
-- [ ] The header has ≤4 new animated features; the existing star, cloud, tail, bubble and meteor animations are unchanged.
-- [ ] Screenshots show no feature overlapping `DRIS` or the subtitle text.
-- [ ] The dialogue types once per load and the mouth stops when the text completes.
-- [ ] Under reduced motion all three lines and `▼` are visible.
-- [ ] The README renders the dialogue above the trimmed paragraph and the alt text reads naturally.
+- [x] The header has ≤4 new animated features; the existing star, cloud, tail, bubble and meteor animations are unchanged.
+- [x] Screenshots show no feature overlapping `DRIS` or the subtitle text.
+- [x] The dialogue types once per load and the mouth stops when the text completes.
+- [x] Under reduced motion all three lines and `▼` are visible.
+- [x] The README renders the dialogue above the trimmed paragraph and the alt text reads naturally.
 
 ## Risk Assessment
 - **Header becomes busy:** cap at 4 features, with an explicit noise review and veto per feature.

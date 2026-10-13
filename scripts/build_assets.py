@@ -1,143 +1,16 @@
 """Builds the pixel-art SVGs in assets/ used by the profile README.
 
 Everything is drawn on a 4px grid with the PICO-8 palette and a 5x7 bitmap
-font, so text stays editable here instead of being hand-placed rects.
+font (see pixel.py), so text stays editable here instead of being
+hand-placed rects.
 
     python3 scripts/build_assets.py
 """
 from pathlib import Path
 
+from pixel import CELL, MOON, Canvas, document, flipbook, layer, pct, text_width, timeline
+
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
-CELL = 4  # px per grid cell
-
-PAL = {
-    "0": "#000000", "1": "#1d2b53", "2": "#7e2553", "3": "#008751",
-    "4": "#ab5236", "5": "#5f574f", "6": "#c2c3c7", "7": "#fff1e8",
-    "8": "#ff004d", "9": "#ffa300", "a": "#ffec27", "b": "#00e436",
-    "c": "#29adff", "d": "#83769c", "e": "#ff77a8", "f": "#ffccaa",
-}
-
-FONT = {
-    "A": "01110 10001 10001 11111 10001 10001 10001",
-    "B": "11110 10001 10001 11110 10001 10001 11110",
-    "C": "01111 10000 10000 10000 10000 10000 01111",
-    "D": "11110 10001 10001 10001 10001 10001 11110",
-    "E": "11111 10000 10000 11110 10000 10000 11111",
-    "F": "11111 10000 10000 11110 10000 10000 10000",
-    "G": "01111 10000 10000 10011 10001 10001 01111",
-    "H": "10001 10001 10001 11111 10001 10001 10001",
-    "I": "11111 00100 00100 00100 00100 00100 11111",
-    "J": "00111 00010 00010 00010 00010 10010 01100",
-    "K": "10001 10010 10100 11000 10100 10010 10001",
-    "L": "10000 10000 10000 10000 10000 10000 11111",
-    "M": "10001 11011 10101 10101 10001 10001 10001",
-    "N": "10001 11001 10101 10011 10001 10001 10001",
-    "O": "01110 10001 10001 10001 10001 10001 01110",
-    "P": "11110 10001 10001 11110 10000 10000 10000",
-    "Q": "01110 10001 10001 10001 10101 10010 01101",
-    "R": "11110 10001 10001 11110 10100 10010 10001",
-    "S": "01111 10000 10000 01110 00001 00001 11110",
-    "T": "11111 00100 00100 00100 00100 00100 00100",
-    "U": "10001 10001 10001 10001 10001 10001 01110",
-    "V": "10001 10001 10001 10001 10001 01010 00100",
-    "W": "10001 10001 10001 10101 10101 10101 01010",
-    "X": "10001 10001 01010 00100 01010 10001 10001",
-    "Y": "10001 10001 01010 00100 00100 00100 00100",
-    "Z": "11111 00001 00010 00100 01000 10000 11111",
-    "0": "01110 10001 10011 10101 11001 10001 01110",
-    "1": "00100 01100 00100 00100 00100 00100 01110",
-    "2": "01110 10001 00001 00010 00100 01000 11111",
-    "3": "11110 00001 00001 01110 00001 00001 11110",
-    "4": "00010 00110 01010 10010 11111 00010 00010",
-    "5": "11111 10000 11110 00001 00001 10001 01110",
-    "6": "00110 01000 10000 11110 10001 10001 01110",
-    "7": "11111 00001 00010 00100 01000 01000 01000",
-    "8": "01110 10001 10001 01110 10001 10001 01110",
-    "9": "01110 10001 10001 01111 00001 00010 01100",
-    " ": "00000 00000 00000 00000 00000 00000 00000",
-    ".": "00000 00000 00000 00000 00000 00000 00100",
-    ",": "00000 00000 00000 00000 00000 00100 01000",
-    "!": "00100 00100 00100 00100 00100 00000 00100",
-    "?": "01110 10001 00001 00010 00100 00000 00100",
-    ":": "00000 00100 00000 00000 00000 00100 00000",
-    "-": "00000 00000 00000 01110 00000 00000 00000",
-    "/": "00001 00010 00010 00100 01000 01000 10000",
-    "&": "01100 10010 10100 01000 10101 10010 01101",
-    "+": "00000 00100 00100 11111 00100 00100 00000",
-    ">": "01000 00100 00010 00001 00010 00100 01000",
-    "<": "00010 00100 01000 10000 01000 00100 00010",
-    "*": "00000 10101 01110 11111 01110 10101 00000",
-    "~": "00000 00000 01000 10101 00010 00000 00000",
-    "|": "00100 00100 00100 00100 00100 00100 00100",
-    "'": "00100 00100 00000 00000 00000 00000 00000",
-    "·": "00000 00000 00000 00100 00000 00000 00000",
-    "♥": "00000 01010 11111 11111 01110 00100 00000",
-}
-
-
-class Canvas:
-    """Collects filled cells per colour and emits one <path> per colour."""
-
-    def __init__(self):
-        self.cells = {}
-
-    def put(self, x, y, c):
-        self.cells[(x, y)] = c
-
-    def rect(self, x, y, w, h, c):
-        for j in range(h):
-            for i in range(w):
-                self.put(x + i, y + j, c)
-
-    def sprite(self, x, y, rows, scale=1):
-        for j, row in enumerate(rows):
-            for i, ch in enumerate(row):
-                if ch != ".":
-                    self.rect(x + i * scale, y + j * scale, scale, scale, ch)
-
-    def text(self, x, y, s, c, scale=1, shadow=None, offset=None):
-        if shadow:
-            o = offset or scale
-            self.text(x + o, y + o, s, shadow, scale)
-        for n, ch in enumerate(s):
-            for j, row in enumerate(FONT[ch].split()):
-                for i, bit in enumerate(row):
-                    if bit == "1":
-                        self.rect(x + (n * 6 + i) * scale, y + j * scale, scale, scale, c)
-
-    def svg(self):
-        by_colour = {}
-        for (x, y), c in self.cells.items():
-            by_colour.setdefault(c, set()).add((x, y))
-        out = []
-        for c, cells in by_colour.items():
-            d = []
-            for y in sorted({y for _, y in cells}):
-                xs = sorted(x for x, yy in cells if yy == y)
-                start = prev = xs[0]
-                for x in xs[1:] + [None]:
-                    if x is not None and x == prev + 1:
-                        prev = x
-                        continue
-                    d.append(f"M{start} {y}h{prev - start + 1}v1h-{prev - start + 1}z")
-                    if x is not None:
-                        start = prev = x
-            out.append(f'<path fill="{PAL[c]}" d="{"".join(d)}"/>')
-        return f'<g transform="scale({CELL})">{"".join(out)}</g>'
-
-
-def text_width(s, scale=1):
-    return (len(s) * 6 - 1) * scale
-
-
-def document(w, h, title, body, style=""):
-    return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{w * CELL}" height="{h * CELL}" '
-        f'viewBox="0 0 {w * CELL} {h * CELL}" shape-rendering="crispEdges" role="img" aria-label="{title}">\n'
-        f"<title>{title}</title>\n<style>{style}"
-        "@media (prefers-reduced-motion: reduce){*{animation:none!important}}</style>\n"
-        f"{body}\n</svg>\n"
-    )
 
 
 # --- Sprites -------------------------------------------------------------
@@ -175,21 +48,6 @@ CAT = [
 CAT_TAIL_A = ["..00", ".050", "050.", "05..", "05..", "050.", ".000"]
 CAT_TAIL_B = ["....", "....", "...0", "..05", ".050", "050.", "00.."]
 
-MOON = [
-    "....0000....",
-    "..00777700..",
-    ".0777777770.",
-    ".0777766770.",
-    "077777677770",
-    "077667777770",
-    "077667777770",
-    "077777777670",
-    ".0777777770.",
-    ".0776777770.",
-    "..00777700..",
-    "....0000....",
-]
-
 CLOUD = [
     ".....6666.......",
     "...66666666..66.",
@@ -213,23 +71,33 @@ BUBBLE = [
     "....070......",
     "....00.......",
 ]
+CAT_EARS_TWITCH = [".....0.", "000.00."]
+METEOR = ["......dd", "...66...", "7......."]
+
 ICON_CODE = ["..8.....8..", ".8...8...8.", "8...8.....8", ".8.8.....8.", "..8.....8.."]
 ICON_HEART = [".88.88.", "8888888", "8888888", ".88888.", "..888.."]
 ICON_STAR = ["...a...", "..aaa..", "aaaaaaa", ".aaaaa.", "aa...aa"]
 
 
-def layer(build, cls="", style=""):
-    """Draws a layer; animated ones get a wrapper so CSS transforms don't
-    replace the scale() on the inner group."""
-    c = Canvas()
-    build(c)
-    if not cls and not style:
-        return c.svg()
-    attrs = (f' class="{cls}"' if cls else "") + (f' style="{style}"' if style else "")
-    return f"<g{attrs}>{c.svg()}</g>"
 
 
 # --- Header --------------------------------------------------------------
+
+def drift(name, waypoints, period, hop=.25):
+    """Moves a 1-cell layer through waypoints (cells) and back, one pixel hop
+    per tick; it is hidden by default so the static scene stays unchanged."""
+    ticks = round(period / hop)
+    legs = list(zip(waypoints, waypoints[1:] + waypoints[:1]))
+    points = []
+    for k in range(ticks):
+        u = k / ticks * len(legs)
+        (xa, ya), (xb, yb) = legs[int(u)]
+        f = u - int(u)
+        x, y = round(xa + (xb - xa) * f), round(ya + (yb - ya) * f)
+        points.append((k * hop, f"translate({x * CELL}px,{y * CELL}px)"))
+    x0, y0 = waypoints[0]
+    return timeline(name, points, period, f"translate({x0 * CELL}px,{y0 * CELL}px)", prop="transform")
+
 
 def header():
     W, H = 300, 100
@@ -272,7 +140,33 @@ def header():
 
     def dev(c):
         c.sprite(DEV_X, 42, DEV, scale=2)
-        c.sprite(CAT_X, 54, CAT, scale=2)
+        c.sprite(CAT_X, 58, CAT[2:], scale=2)  # ears are a flipbook below
+
+    ears, ears_css = flipbook("ears", [CAT[:2], CAT_EARS_TWITCH], CAT_X, 54, 7,
+                              [(0, .15, 1), (.3, .45, 1)], delay=1.5, scale=2)
+
+    fireflies, firefly_css = [], []
+    for k, (period, colour, path) in enumerate([
+        (5.3, "a", [(34, 80), (40, 77), (47, 79), (44, 83), (37, 84)]),
+        (6.1, "b", [(88, 78), (95, 81), (101, 77), (96, 76), (90, 82)]),
+        (7.7, "a", [(150, 82), (157, 78), (163, 80), (160, 84), (152, 85)]),
+        (8.9, "b", [(186, 77), (192, 80), (198, 78), (195, 83), (189, 81)]),
+    ]):
+        on = [(0, 1), (period * .3, 0), (period * .4, 1), (period * .75, 0), (period * .8, 1)]
+        fireflies.append(f'<g class="fly{k}">{layer(lambda c, colour=colour: c.put(0, 0, colour), f"glow{k}")}</g>')
+        firefly_css.append(drift(f"fly{k}", path, period) + timeline(f"glow{k}", on, period * .9, 0))
+
+    # meteor shower: three meteors every 30s, above the bubble on the right
+    meteors, meteor_css = [], []
+    for k, (x, y) in enumerate([(290, -2), (268, 2), (300, 6)]):
+        start = 12 + k * .35
+        points = [(0, "opacity:0")] + [
+            (start + i * .1, f"opacity:1;transform:translate({(x - 8 * i) * CELL}px,{(y + 2 * i) * CELL}px)")
+            for i in range(8)
+        ] + [(start + .8, "opacity:0")]
+        meteors.append(layer(lambda c: c.sprite(0, 0, METEOR), f"met{k}"))
+        frames = "".join(f"{pct(t / 30 * 100)}%{{{v}}}" for t, v in points)
+        meteor_css.append(f".met{k}{{opacity:0;animation:met{k} 30s step-end infinite}}@keyframes met{k}{{{frames}}}")
 
     body = [
         layer(sky),
@@ -289,6 +183,9 @@ def header():
         layer(name),
         layer(lambda c: c.rect(118, 12, 4, 28, "8"), "blink"),
         layer(dev),
+        *ears,
+        *fireflies,
+        *meteors,
         layer(lambda c: c.sprite(CAT_X + 12, 58, CAT_TAIL_A, scale=2), "frame-a"),
         layer(lambda c: c.sprite(CAT_X + 12, 58, CAT_TAIL_B, scale=2), "frame-b"),
         layer(lambda c: c.sprite(DEV_X + 18, 16, BUBBLE, scale=2)),
@@ -313,13 +210,111 @@ def header():
         ".shoot{opacity:0;animation:shoot 9s steps(24) infinite}"
         "@keyframes shoot{0%{opacity:1;transform:translate(700px,20px)}"
         "8%{opacity:1;transform:translate(560px,90px)}8.01%,100%{opacity:0;transform:translate(560px,90px)}}"
+        + ears_css
+        + "".join(firefly_css)
+        + "".join(meteor_css)
     )
     return document(W, H, "Dris (Duong Minh Tien): frontend, shaders, games, AI tools", "\n".join(body), style)
 
 
+# --- About dialogue ---------------------------------------------------------
+
+FACE = [
+    "....00000000....",
+    "...0555555550...",
+    "..055555555550..",
+    "..055555555550..",
+    "..0555f55f5550..",
+    "..05ffffffff50..",
+    "..0ff0ffff0ff0..",
+    "..0ff0ffff0ff0..",
+    "..0ffffffffff0..",
+    "..0ffffffffff0..",
+    "..0ffff00ffff0..",
+    "...0ffffffff0...",
+    "....00ffff00....",
+    "...0880ff0880...",
+    "..088888888880..",
+    "..088888888880..",
+]
+MOUTH_OPEN = ["00", "20"]
+NEXT = ["77777", ".777.", "..7.."]
+GREETING = [
+    "HI, I'M TIEN - DRIS ON THE INTERNET.",
+    "WELCOME TO MY CORNER OF GITHUB.",
+    "GRAB A SNACK AND LOOK AROUND!",
+]
+CHAR_S, LINE_PAUSE, TYPE_START = .05, .3, .5
+
+
+def dialogue():
+    W, H = 300, 44
+    TOP = 4          # box top; the name tab overlaps its border
+    TEXT_X = 46
+    LINES_Y = [13, 22, 31]
+    FACE_X, FACE_Y = 7, 9
+    name = "TIEN"
+
+    def box(c):
+        c.rect(1, TOP, W - 2, H - TOP, "0")
+        c.rect(0, TOP + 1, W, H - TOP - 2, "0")
+        c.rect(1, TOP + 1, W - 2, H - TOP - 2, "7")
+        c.rect(2, TOP + 2, W - 4, H - TOP - 4, "6")
+        c.rect(3, TOP + 3, W - 6, H - TOP - 6, "1")
+        # portrait slot
+        c.rect(FACE_X - 2, FACE_Y - 2, 36, 36, "0")
+        c.rect(FACE_X - 1, FACE_Y - 1, 34, 34, "2")
+        c.sprite(FACE_X, FACE_Y, FACE, scale=2)
+        # name tab, like the section heading plates
+        w = text_width(name) + 8
+        c.rect(9, 0, w - 2, 11, "0")
+        c.rect(8, 1, w, 9, "0")
+        c.rect(9, 1, w - 2, 9, "d")
+        c.rect(10, 2, w - 4, 7, "1")
+        c.text(12, 2, name, "a")
+        for line, y in zip(GREETING, LINES_Y):
+            c.text(TEXT_X, y, line, "7")
+
+    # typewriter: a sky-coloured cover slides off each line one glyph per
+    # step; its resting place is past the line, so static renders show text
+    defs, covers, css, t = [], [], [], TYPE_START
+    for k, (line, y) in enumerate(zip(GREETING, LINES_Y)):
+        n, w = len(line), len(line) * 6
+        defs.append(f'<clipPath id="line{k}"><rect x="{TEXT_X * CELL}" y="{y * CELL}" '
+                    f'width="{w * CELL}" height="{8 * CELL}"/></clipPath>')
+        covers.append(f'<g clip-path="url(#line{k})">'
+                      f'{layer(lambda c, y=y, w=w: c.rect(TEXT_X, y, w, 8, "1"), f"type{k}")}</g>')
+        css.append(f".type{k}{{transform:translateX({w * CELL}px);"
+                   f"animation:type{k} {n * CHAR_S:g}s steps({n}) {t:g}s 1 backwards}}"
+                   f"@keyframes type{k}{{from{{transform:translateX(0)}}to{{transform:translateX({w * CELL}px)}}}}")
+        t += n * CHAR_S + LINE_PAUSE
+    typing = t - LINE_PAUSE - TYPE_START
+    flaps = round(typing / .25)
+
+    body = [
+        layer(box),
+        *covers,
+        layer(lambda c: c.sprite(FACE_X + 14, FACE_Y + 20, MOUTH_OPEN, scale=2), "mouth"),
+        layer(lambda c: c.sprite(W - 12, H - 8, NEXT), "next"),
+    ]
+    style = "".join(css) + (
+        f".mouth{{opacity:0;animation:mouth .25s steps(1) {flaps} {TYPE_START:g}s backwards}}"
+        "@keyframes mouth{0%{opacity:0}50%{opacity:1}}"
+        # backwards fill keeps it hidden while typing; visible by default
+        f".next{{animation:next 1s steps(1) infinite {t - LINE_PAUSE:g}s backwards}}"
+        "@keyframes next{0%{opacity:0}50%{opacity:1}}"
+    )
+    title = "Tien says: Hi, I'm Tien - Dris on the internet. Welcome to my corner of GitHub. Grab a snack and look around!"
+    return document(W, H, title, f"<defs>{''.join(defs)}</defs>\n" + "\n".join(body), style)
+
+
 # --- Section headings -----------------------------------------------------
 
-def heading(label, icon):
+ICON_PERIOD = 4.8
+
+
+def heading(label, frames, slots, delay, anchor="center"):
+    icon = frames[0]
     w = text_width(label) + 30
     H = 15
 
@@ -328,16 +323,41 @@ def heading(label, icon):
         c.rect(0, 1, w, H - 2, "0")
         c.rect(1, 1, w - 2, H - 2, "d")
         c.rect(2, 2, w - 4, H - 4, "1")
-        c.sprite(4, (H - len(icon)) // 2, icon)
         c.text(4 + len(icon[0]) + 4, 4, label, "7", shadow="0")
 
-    return document(w, H, label.title(), layer(plate))
+    icons, css = flipbook("ic", frames, 4, (H - len(icon)) // 2, ICON_PERIOD, slots, delay, anchor=anchor)
+    return document(w, H, label.title(), "\n".join([layer(plate)] + icons), css)
 
 
 # --- Footer ---------------------------------------------------------------
 
+COIN_SPIN = [
+    [".aa.", "a97a", "a97a", "a97a", "a99a", ".aa."],
+    [".a.", "a7a", "a9a", "a9a", "a9a", ".a."],
+    ["a", "7", "9", "9", "9", "a"],
+    [".a.", "a7a", "a9a", "a9a", "a9a", ".a."],
+]
+FOOTER_PERIOD = 16
+COUNTDOWN_S, GAME_OVER_S = 10, 12.5
+
+
+def blink(start, end, on=.4, off=.25):
+    """(t, opacity) points: visible-blinking from start to end, hidden elsewhere."""
+    points, t = [(0, 0)], start
+    while t < end:
+        points += [(t, 1), (min(t + on, end), 0)]
+        t += on + off
+    return points
+
+
 def footer():
     W, H = 300, 40
+    LINE_Y = 21
+    insert = "INSERT COIN TO CONTINUE"
+    prompt = "CONTINUE? "
+    over = "GAME OVER"
+    prompt_x = (W - text_width(prompt + "0")) // 2
+    digit_x = prompt_x + len(prompt) * 6
 
     def scene(c):
         c.rect(0, 0, W, H, "1")
@@ -347,43 +367,78 @@ def footer():
         line = "THANKS FOR PLAYING!"
         c.text((W - text_width(line, 2)) // 2, 4, line, "a", scale=2, shadow="2")
 
-    def coin(c):
-        line = "INSERT COIN TO CONTINUE"
-        c.text((W - text_width(line)) // 2, 21, line, "7")
+    def digits(c):
+        for n in range(10):
+            c.text(digit_x, LINE_Y + n * 8, str(9 - n), "7")
 
+    clip = (f'<clipPath id="digit"><rect x="{digit_x * CELL}" y="{LINE_Y * CELL}" '
+            f'width="{5 * CELL}" height="{7 * CELL}"/></clipPath>')
+    countdown = [(0, 1), (COUNTDOWN_S, 0)]
+    coin_layers, coin_css = flipbook("spin", COIN_SPIN, (W - text_width(insert)) // 2 - 9, LINE_Y, .6,
+                                     [(.15, .3, 1), (.3, .45, 2), (.45, .6, 3)])
     body = [
         layer(scene),
-        layer(coin, "blink"),
+        layer(lambda c: c.text((W - text_width(insert)) // 2, LINE_Y, insert, "7"), "insert"),
+        layer(lambda c: c.text((W - text_width(over)) // 2, LINE_Y, over, "8"), "over"),
+        f'<g class="prompt">{layer(lambda c: c.text(prompt_x, LINE_Y, prompt, "7"))}'
+        f'<g clip-path="url(#digit)">{layer(digits, "tick")}</g></g>',
+        *coin_layers,
         layer(lambda c: c.sprite(270, 12, CAT, scale=2)),
         layer(lambda c: c.sprite(282, 16, CAT_TAIL_A, scale=2), "frame-a"),
         layer(lambda c: c.sprite(282, 16, CAT_TAIL_B, scale=2), "frame-b"),
     ]
     style = (
-        ".blink{animation:blink 1.4s steps(1) infinite}@keyframes blink{50%{opacity:0}}"
-        ".frame-a{animation:frame 1.6s steps(1) infinite}"
+        timeline("insert", blink(GAME_OVER_S, FOOTER_PERIOD), FOOTER_PERIOD, 1)
+        + timeline("over", blink(COUNTDOWN_S, GAME_OVER_S), FOOTER_PERIOD, 0)
+        + timeline("prompt", countdown, FOOTER_PERIOD, 0)
+        + timeline("tick", [(n, f"translateY(-{n * 8 * CELL}px)") for n in range(10)], FOOTER_PERIOD,
+                   "translateY(0)", prop="transform")
+        + coin_css
+        + ".frame-a{animation:frame 1.6s steps(1) infinite}"
         ".frame-b{animation:frame 1.6s steps(1) infinite -.8s}"
         "@keyframes frame{0%{opacity:1}50%{opacity:0}}"
     )
-    return document(W, H, "Thanks for playing! Insert coin to continue", "\n".join(body), style)
+    return document(W, H, "Thanks for playing! Insert coin to continue", f"<defs>{clip}</defs>\n" + "\n".join(body), style)
 
 
-HEART = [".00.00.", "0880880", "0888880", ".08880.", "..080.."]
-SWORD = ["......00", ".....070", "....070.", "0..070..", ".0070...", "..00....", ".0.0....", "0......."]
-CHEST = [".000000.", "04444440", "00099000", "04494440", "04444440", "00000000"]
-SCROLL = ["000000.", "0777770", ".077770", ".077770", ".077770", "0000000"]
-TROPHY = ["0000000", "0aaaaa0", ".0aaa0.", "..0a0..", "..0a0..", ".00000."]
+HEART_FRAMES = [
+    [".00.00.", "0880880", "0888880", ".08880.", "..080.."],
+    [".000.000.", "088808880", "088888880", "088888880", ".0888880.", "..08880..", "...080..."],
+]
+_CHEST_BODY = ["00099000", "04494440", "04444440", "00000000"]
+CHEST_FRAMES = [
+    [".000000.", "04444440"] + _CHEST_BODY,
+    [".000000.", "04444440", "00000000", "01111110"] + _CHEST_BODY,
+    [".000000.", "04444440", "00000000", "011a9110"] + _CHEST_BODY,
+    [".00a900.", "044a9440", "00000000", "01111110"] + _CHEST_BODY,
+]
+_SCROLL = ["000000.", "0777770", ".077770", ".077770", ".077770", "0000000"]
+SCROLL_FRAMES = [
+    _SCROLL,
+    _SCROLL[:1] + ["0755570"] + _SCROLL[2:],
+    _SCROLL[:1] + ["0755570", ".077770", ".057770"] + _SCROLL[4:],
+    _SCROLL[:1] + ["0755570", ".077770", ".055570"] + _SCROLL[4:],
+]
+_TROPHY = ["0000000", "0aaaaa0", ".0aaa0.", "..0a0..", "..0a0..", ".00000."]
+TROPHY_FRAMES = [
+    _TROPHY,
+    ["0000000", "07aaaa0", ".0aaa0.", "..0a0..", "..0a0..", ".00000."],
+    ["0000000", "0aa7aa0", ".07aa0.", "..0a0..", "..0a0..", ".00000."],
+    ["0000000", "0aaaa70", ".0aa70.", "..070..", "..0a0..", ".00000."],
+]
 
 HEADINGS = {
-    "h-about.svg": ("ABOUT ME", HEART),
-    "h-inventory.svg": ("INVENTORY", CHEST),
-    "h-quests.svg": ("QUEST LOG", SCROLL),
-    "h-scores.svg": ("HIGH SCORES", TROPHY),
+    "h-about.svg": ("ABOUT ME", HEART_FRAMES, [(0, .15, 1), (.3, .45, 1)], 0),
+    "h-inventory.svg": ("INVENTORY", CHEST_FRAMES, [(0, .15, 1), (.15, .35, 2), (.35, .6, 3), (.6, .8, 1)], 1.2, "bottom"),
+    "h-quests.svg": ("QUEST LOG", SCROLL_FRAMES, [(0, .2, 1), (.2, .4, 2), (.4, .8, 3)], 2.4),
+    "h-scores.svg": ("HIGH SCORES", TROPHY_FRAMES, [(0, .2, 1), (.2, .4, 2), (.4, .6, 3)], 3.6),
 }
 
 if __name__ == "__main__":
     ASSETS.mkdir(exist_ok=True)
     (ASSETS / "header.svg").write_text(header())
     (ASSETS / "footer.svg").write_text(footer())
-    for name, (label, icon) in HEADINGS.items():
-        (ASSETS / name).write_text(heading(label, icon))
+    (ASSETS / "about-dialogue.svg").write_text(dialogue())
+    for name, args in HEADINGS.items():
+        (ASSETS / name).write_text(heading(*args))
     print("wrote", sorted(p.name for p in ASSETS.glob("*.svg")))
