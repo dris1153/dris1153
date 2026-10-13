@@ -104,10 +104,7 @@ Hi, I'm Tien — Dris on the internet. I'm a developer in Vietnam and I mostly b
 </p>
 
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/dris1153/dris1153/output/github-snake-dark.svg" />
-    <img src="https://raw.githubusercontent.com/dris1153/dris1153/output/github-snake.svg" width="100%" alt="A snake eating dris1153's contribution graph" />
-  </picture>
+  <img src="https://raw.githubusercontent.com/dris1153/dris1153/output/platformer.svg" width="100%" alt="dris1153's contribution graph as a pixel platformer level: each week is a column as tall as the days with commits, and a developer and a cat run across it collecting coins" />
 </p>
 
 <p align="center">
