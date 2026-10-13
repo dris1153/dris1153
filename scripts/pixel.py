@@ -68,6 +68,22 @@ FONT = {
 }
 
 
+MOON = [
+    "....0000....",
+    "..00777700..",
+    ".0777777770.",
+    ".0777766770.",
+    "077777677770",
+    "077667777770",
+    "077667777770",
+    "077777777670",
+    ".0777777770.",
+    ".0776777770.",
+    "..00777700..",
+    "....0000....",
+]
+
+
 class Canvas:
     """Collects filled cells per colour and emits one <path> per colour."""
 
@@ -121,6 +137,11 @@ class Canvas:
 
 def text_width(s, scale=1):
     return (len(s) * 6 - 1) * scale
+
+
+def pct(v):
+    """Keyframe percentage with at most 3 decimals and no trailing zeros."""
+    return f"{v:.3f}".rstrip("0").rstrip(".")
 
 
 def document(w, h, title, body, style=""):

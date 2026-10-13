@@ -8,7 +8,7 @@ hand-placed rects.
 """
 from pathlib import Path
 
-from pixel import Canvas, document, layer, text_width
+from pixel import MOON, Canvas, document, layer, text_width
 
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
 
@@ -47,21 +47,6 @@ CAT = [
 ]
 CAT_TAIL_A = ["..00", ".050", "050.", "05..", "05..", "050.", ".000"]
 CAT_TAIL_B = ["....", "....", "...0", "..05", ".050", "050.", "00.."]
-
-MOON = [
-    "....0000....",
-    "..00777700..",
-    ".0777777770.",
-    ".0777766770.",
-    "077777677770",
-    "077667777770",
-    "077667777770",
-    "077777777670",
-    ".0777777770.",
-    ".0776777770.",
-    "..00777700..",
-    "....0000....",
-]
 
 CLOUD = [
     ".....6666.......",
