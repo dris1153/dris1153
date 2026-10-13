@@ -1,7 +1,7 @@
 ---
 title: "Pixel platformer and animation polish"
 description: "Replace the snake with a self-built contribution platformer and add pixel-art animation polish to headings, footer, header and an About dialogue."
-status: pending
+status: completed
 priority: P2
 effort: 10h
 branch: "claude/sleepy-ramanujan-3oewz2"
@@ -54,12 +54,19 @@ npm i --prefix "$SCRATCH" playwright-core
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 1 | [Extract shared pixel module](./phase-01-extract-shared-pixel-module.md) | Pending |
-| 2 | [Build contribution platformer](./phase-02-build-contribution-platformer.md) | Pending |
-| 3 | [Wire workflow and README](./phase-03-wire-workflow-and-readme.md) | Pending |
-| 4 | [Animate headings and footer](./phase-04-animate-headings-and-footer.md) | Pending |
-| 5 | [Header life and about dialogue](./phase-05-header-life-and-about-dialogue.md) | Pending |
+| 1 | [Extract shared pixel module](./phase-01-extract-shared-pixel-module.md) | Completed |
+| 2 | [Build contribution platformer](./phase-02-build-contribution-platformer.md) | Completed |
+| 3 | [Wire workflow and README](./phase-03-wire-workflow-and-readme.md) | Completed |
+| 4 | [Animate headings and footer](./phase-04-animate-headings-and-footer.md) | Completed |
+| 5 | [Header life and about dialogue](./phase-05-header-life-and-about-dialogue.md) | Completed |
 
 ## Dependencies
 
 No other plans exist, so there are no cross-plan dependencies. External: GitHub GraphQL API (`contributionCalendar`) and the `README_STATS_TOKEN || GITHUB_TOKEN` secret (already used by the workflow).
+
+## Implementation notes
+- Built on branch `claude/blissful-galileo-jvztiz`.
+- Phase 2: `X0` is 18 and the cat trails by 9 cells (not 10) so both actors start on the start platform. Actor paths come from a body/feet footprint search with auto-raised jump arcs instead of the hand-tuned up/down/pit cases. A scratch check confirmed that no frame clips through a pillar. Fixture build: 98.7KB, 17.2s loop, deterministic.
+- Phase 4: `pct()`, `timeline()` and `flipbook()` live in `pixel.py`. The footer coin uses its own 4×6 spin frames, because the platformer's 3×4 `COIN` was too small next to the text.
+- Phase 5: the laptop glow was dropped (it read as stray pixels). `header.svg` was already 51.8KB before this plan, so the ~40KB target was not reachable; it is now 60.1KB.
+- Pending: the post-merge workflow run (phase 3). WebKit/Safari and Firefox were not available; checks ran in headless Chromium only.

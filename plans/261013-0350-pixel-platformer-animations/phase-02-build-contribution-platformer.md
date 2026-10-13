@@ -1,7 +1,7 @@
 ---
 phase: 2
 title: "Build contribution platformer"
-status: pending
+status: completed
 priority: P1
 effort: "4h"
 dependencies: [1]
@@ -160,11 +160,11 @@ Write it once with a throwaway generator in the scratchpad and commit only the J
 9. Optional live check if a token is available: `GITHUB_TOKEN=... python3 scripts/build_platformer.py --user dris1153`.
 
 ## Success Criteria
-- [ ] The fixture build produces a valid SVG under 150KB with a loop of 16–18s, and two runs are byte-identical.
-- [ ] Screenshots show correct landings, pits, the bridge, coin pops, the counter reaching the total and the flag sequence.
-- [ ] The reduced-motion render shows the full level, all coins, the final counter and the caption, with no banner.
-- [ ] Works in an `<img>` context (headless Chromium). If Firefox is available, open it there too.
-- [ ] `assets/` is unchanged after `build_assets.py` (only the sprite moved).
+- [x] The fixture build produces a valid SVG under 150KB with a loop of 16–18s, and two runs are byte-identical.
+- [x] Screenshots show correct landings, pits, the bridge, coin pops, the counter reaching the total and the flag sequence.
+- [x] The reduced-motion render shows the full level, all coins, the final counter and the caption, with no banner.
+- [x] Works in an `<img>` context (headless Chromium). If Firefox is available, open it there too.
+- [x] `assets/` is unchanged after `build_assets.py` (only the sprite moved).
 
 ## Risk Assessment
 - **Jump arcs look wrong (floaty or clipping):** tune the `JUMP_*` constants with screenshots and keep the arc maths in one function.

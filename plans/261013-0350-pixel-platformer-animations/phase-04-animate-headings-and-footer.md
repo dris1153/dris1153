@@ -1,7 +1,7 @@
 ---
 phase: 4
 title: "Animate headings and footer"
-status: pending
+status: completed
 priority: P2
 effort: "2h"
 dependencies: [1]
@@ -85,10 +85,10 @@ Footer (`footer()`):
 5. Check `wc -c assets/*.svg` sizes (expected a few KB each).
 
 ## Success Criteria
-- [ ] Each heading animates ~0.8s, then rests. Staggered delays are visible when all 4 are shown on one page.
-- [ ] At rest and under reduced motion, headings match the current look.
-- [ ] The footer cycles countdown → GAME OVER → INSERT COIN cleanly, with no overlapping text in any frame.
-- [ ] Under reduced motion the footer shows `INSERT COIN TO CONTINUE` and the coin at rest.
+- [x] Each heading animates ~0.8s, then rests. Staggered delays are visible when all 4 are shown on one page.
+- [x] At rest and under reduced motion, headings match the current look.
+- [x] The footer cycles countdown → GAME OVER → INSERT COIN cleanly, with no overlapping text in any frame.
+- [x] Under reduced motion the footer shows `INSERT COIN TO CONTINUE` and the coin at rest.
 
 ## Risk Assessment
 - **Visual noise:** 4 headings plus the footer coin. Mitigated by the long rest and staggering. If the coin spin feels busy, slow it to a 1.2s period.

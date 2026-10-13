@@ -1,7 +1,7 @@
 ---
 phase: 3
 title: "Wire workflow and README"
-status: pending
+status: completed
 priority: P1
 effort: "0.5h"
 dependencies: [2]
@@ -54,8 +54,8 @@ In `README.md`, under HIGH SCORES, replace the snake `<picture>` block with:
 5. After merge to `main`, the `push` trigger runs the workflow. Confirm it is green and that `output/platformer.svg` exists. If it fails, the old README still references a missing file only until the fix lands, so act quickly.
 
 ## Success Criteria
-- [ ] The workflow YAML parses and has a checkout step followed by the platformer step. Snk is gone.
-- [ ] The README has no snake references, and the platformer `<img>` has descriptive alt text.
+- [x] The workflow YAML parses and has a checkout step followed by the platformer step. Snk is gone.
+- [x] The README has no snake references, and the platformer `<img>` has descriptive alt text.
 - [ ] Post-merge run is green and `output` contains `platformer.svg` and the 4 stats SVGs.
 
 ## Risk Assessment
