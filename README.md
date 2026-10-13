@@ -10,7 +10,9 @@
 
 <img src="./assets/h-about.svg" height="45" alt="About me" />
 
-Hi, I'm Tien — Dris on the internet. I'm a developer in Vietnam and I mostly build things for the browser: the parts of the web that feel a little alive, like shaders, small games and tools that save someone an afternoon. Lately I've been writing a shader course, making Claude Code skills and picking up Rust.
+<img src="./assets/about-dialogue.svg" width="100%" alt="Tien says: Hi, I'm Tien - Dris on the internet. Welcome to my corner of GitHub. Grab a snack and look around!" />
+
+I'm a developer in Vietnam and I mostly build things for the browser: the parts of the web that feel a little alive, like shaders, small games and tools that save someone an afternoon. Lately I've been writing a shader course, making Claude Code skills and picking up Rust.
 
 <table>
   <tr><td><b>Class</b></td><td>Creative developer (frontend main hand, full-stack off hand)</td></tr>

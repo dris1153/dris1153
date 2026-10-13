@@ -8,7 +8,7 @@ hand-placed rects.
 """
 from pathlib import Path
 
-from pixel import CELL, MOON, Canvas, document, flipbook, layer, text_width, timeline
+from pixel import CELL, MOON, Canvas, document, flipbook, layer, pct, text_width, timeline
 
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
 
@@ -71,6 +71,9 @@ BUBBLE = [
     "....070......",
     "....00.......",
 ]
+CAT_EARS_TWITCH = [".....0.", "000.00."]
+METEOR = ["......dd", "...66...", "7......."]
+
 ICON_CODE = ["..8.....8..", ".8...8...8.", "8...8.....8", ".8.8.....8.", "..8.....8.."]
 ICON_HEART = [".88.88.", "8888888", "8888888", ".88888.", "..888.."]
 ICON_STAR = ["...a...", "..aaa..", "aaaaaaa", ".aaaaa.", "aa...aa"]
@@ -79,6 +82,22 @@ ICON_STAR = ["...a...", "..aaa..", "aaaaaaa", ".aaaaa.", "aa...aa"]
 
 
 # --- Header --------------------------------------------------------------
+
+def drift(name, waypoints, period, hop=.25):
+    """Moves a 1-cell layer through waypoints (cells) and back, one pixel hop
+    per tick; it is hidden by default so the static scene stays unchanged."""
+    ticks = round(period / hop)
+    legs = list(zip(waypoints, waypoints[1:] + waypoints[:1]))
+    points = []
+    for k in range(ticks):
+        u = k / ticks * len(legs)
+        (xa, ya), (xb, yb) = legs[int(u)]
+        f = u - int(u)
+        x, y = round(xa + (xb - xa) * f), round(ya + (yb - ya) * f)
+        points.append((k * hop, f"translate({x * CELL}px,{y * CELL}px)"))
+    x0, y0 = waypoints[0]
+    return timeline(name, points, period, f"translate({x0 * CELL}px,{y0 * CELL}px)", prop="transform")
+
 
 def header():
     W, H = 300, 100
@@ -121,7 +140,33 @@ def header():
 
     def dev(c):
         c.sprite(DEV_X, 42, DEV, scale=2)
-        c.sprite(CAT_X, 54, CAT, scale=2)
+        c.sprite(CAT_X, 58, CAT[2:], scale=2)  # ears are a flipbook below
+
+    ears, ears_css = flipbook("ears", [CAT[:2], CAT_EARS_TWITCH], CAT_X, 54, 7,
+                              [(0, .15, 1), (.3, .45, 1)], delay=1.5, scale=2)
+
+    fireflies, firefly_css = [], []
+    for k, (period, colour, path) in enumerate([
+        (5.3, "a", [(34, 80), (40, 77), (47, 79), (44, 83), (37, 84)]),
+        (6.1, "b", [(88, 78), (95, 81), (101, 77), (96, 76), (90, 82)]),
+        (7.7, "a", [(150, 82), (157, 78), (163, 80), (160, 84), (152, 85)]),
+        (8.9, "b", [(186, 77), (192, 80), (198, 78), (195, 83), (189, 81)]),
+    ]):
+        on = [(0, 1), (period * .3, 0), (period * .4, 1), (period * .75, 0), (period * .8, 1)]
+        fireflies.append(f'<g class="fly{k}">{layer(lambda c, colour=colour: c.put(0, 0, colour), f"glow{k}")}</g>')
+        firefly_css.append(drift(f"fly{k}", path, period) + timeline(f"glow{k}", on, period * .9, 0))
+
+    # meteor shower: three meteors every 30s, above the bubble on the right
+    meteors, meteor_css = [], []
+    for k, (x, y) in enumerate([(290, -2), (268, 2), (300, 6)]):
+        start = 12 + k * .35
+        points = [(0, "opacity:0")] + [
+            (start + i * .1, f"opacity:1;transform:translate({(x - 8 * i) * CELL}px,{(y + 2 * i) * CELL}px)")
+            for i in range(8)
+        ] + [(start + .8, "opacity:0")]
+        meteors.append(layer(lambda c: c.sprite(0, 0, METEOR), f"met{k}"))
+        frames = "".join(f"{pct(t / 30 * 100)}%{{{v}}}" for t, v in points)
+        meteor_css.append(f".met{k}{{opacity:0;animation:met{k} 30s step-end infinite}}@keyframes met{k}{{{frames}}}")
 
     body = [
         layer(sky),
@@ -138,6 +183,9 @@ def header():
         layer(name),
         layer(lambda c: c.rect(118, 12, 4, 28, "8"), "blink"),
         layer(dev),
+        *ears,
+        *fireflies,
+        *meteors,
         layer(lambda c: c.sprite(CAT_X + 12, 58, CAT_TAIL_A, scale=2), "frame-a"),
         layer(lambda c: c.sprite(CAT_X + 12, 58, CAT_TAIL_B, scale=2), "frame-b"),
         layer(lambda c: c.sprite(DEV_X + 18, 16, BUBBLE, scale=2)),
@@ -162,8 +210,102 @@ def header():
         ".shoot{opacity:0;animation:shoot 9s steps(24) infinite}"
         "@keyframes shoot{0%{opacity:1;transform:translate(700px,20px)}"
         "8%{opacity:1;transform:translate(560px,90px)}8.01%,100%{opacity:0;transform:translate(560px,90px)}}"
+        + ears_css
+        + "".join(firefly_css)
+        + "".join(meteor_css)
     )
     return document(W, H, "Dris (Duong Minh Tien): frontend, shaders, games, AI tools", "\n".join(body), style)
+
+
+# --- About dialogue ---------------------------------------------------------
+
+FACE = [
+    "....00000000....",
+    "...0555555550...",
+    "..055555555550..",
+    "..055555555550..",
+    "..0555f55f5550..",
+    "..05ffffffff50..",
+    "..0ff0ffff0ff0..",
+    "..0ff0ffff0ff0..",
+    "..0ffffffffff0..",
+    "..0ffffffffff0..",
+    "..0ffff00ffff0..",
+    "...0ffffffff0...",
+    "....00ffff00....",
+    "...0880ff0880...",
+    "..088888888880..",
+    "..088888888880..",
+]
+MOUTH_OPEN = ["00", "20"]
+NEXT = ["77777", ".777.", "..7.."]
+GREETING = [
+    "HI, I'M TIEN - DRIS ON THE INTERNET.",
+    "WELCOME TO MY CORNER OF GITHUB.",
+    "GRAB A SNACK AND LOOK AROUND!",
+]
+CHAR_S, LINE_PAUSE, TYPE_START = .05, .3, .5
+
+
+def dialogue():
+    W, H = 300, 44
+    TOP = 4          # box top; the name tab overlaps its border
+    TEXT_X = 46
+    LINES_Y = [13, 22, 31]
+    FACE_X, FACE_Y = 7, 9
+    name = "TIEN"
+
+    def box(c):
+        c.rect(1, TOP, W - 2, H - TOP, "0")
+        c.rect(0, TOP + 1, W, H - TOP - 2, "0")
+        c.rect(1, TOP + 1, W - 2, H - TOP - 2, "7")
+        c.rect(2, TOP + 2, W - 4, H - TOP - 4, "6")
+        c.rect(3, TOP + 3, W - 6, H - TOP - 6, "1")
+        # portrait slot
+        c.rect(FACE_X - 2, FACE_Y - 2, 36, 36, "0")
+        c.rect(FACE_X - 1, FACE_Y - 1, 34, 34, "2")
+        c.sprite(FACE_X, FACE_Y, FACE, scale=2)
+        # name tab, like the section heading plates
+        w = text_width(name) + 8
+        c.rect(9, 0, w - 2, 11, "0")
+        c.rect(8, 1, w, 9, "0")
+        c.rect(9, 1, w - 2, 9, "d")
+        c.rect(10, 2, w - 4, 7, "1")
+        c.text(12, 2, name, "a")
+        for line, y in zip(GREETING, LINES_Y):
+            c.text(TEXT_X, y, line, "7")
+
+    # typewriter: a sky-coloured cover slides off each line one glyph per
+    # step; its resting place is past the line, so static renders show text
+    defs, covers, css, t = [], [], [], TYPE_START
+    for k, (line, y) in enumerate(zip(GREETING, LINES_Y)):
+        n, w = len(line), len(line) * 6
+        defs.append(f'<clipPath id="line{k}"><rect x="{TEXT_X * CELL}" y="{y * CELL}" '
+                    f'width="{w * CELL}" height="{8 * CELL}"/></clipPath>')
+        covers.append(f'<g clip-path="url(#line{k})">'
+                      f'{layer(lambda c, y=y, w=w: c.rect(TEXT_X, y, w, 8, "1"), f"type{k}")}</g>')
+        css.append(f".type{k}{{transform:translateX({w * CELL}px);"
+                   f"animation:type{k} {n * CHAR_S:g}s steps({n}) {t:g}s 1 backwards}}"
+                   f"@keyframes type{k}{{from{{transform:translateX(0)}}to{{transform:translateX({w * CELL}px)}}}}")
+        t += n * CHAR_S + LINE_PAUSE
+    typing = t - LINE_PAUSE - TYPE_START
+    flaps = round(typing / .25)
+
+    body = [
+        layer(box),
+        *covers,
+        layer(lambda c: c.sprite(FACE_X + 14, FACE_Y + 20, MOUTH_OPEN, scale=2), "mouth"),
+        layer(lambda c: c.sprite(W - 12, H - 8, NEXT), "next"),
+    ]
+    style = "".join(css) + (
+        f".mouth{{opacity:0;animation:mouth .25s steps(1) {flaps} {TYPE_START:g}s backwards}}"
+        "@keyframes mouth{0%{opacity:0}50%{opacity:1}}"
+        # backwards fill keeps it hidden while typing; visible by default
+        f".next{{animation:next 1s steps(1) infinite {t - LINE_PAUSE:g}s backwards}}"
+        "@keyframes next{0%{opacity:0}50%{opacity:1}}"
+    )
+    title = "Tien says: " + " ".join(GREETING).title()
+    return document(W, H, title, f"<defs>{''.join(defs)}</defs>\n" + "\n".join(body), style)
 
 
 # --- Section headings -----------------------------------------------------
@@ -296,6 +438,7 @@ if __name__ == "__main__":
     ASSETS.mkdir(exist_ok=True)
     (ASSETS / "header.svg").write_text(header())
     (ASSETS / "footer.svg").write_text(footer())
+    (ASSETS / "about-dialogue.svg").write_text(dialogue())
     for name, args in HEADINGS.items():
         (ASSETS / name).write_text(heading(*args))
     print("wrote", sorted(p.name for p in ASSETS.glob("*.svg")))
