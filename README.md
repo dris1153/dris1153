@@ -3,7 +3,7 @@
 </a>
 
 <p align="center">
-  <a href="https://x.com/drakin7290"><img src="https://img.shields.io/badge/@drakin7290-000000?style=flat-square&logo=x&logoColor=white" alt="X / Twitter" /></a>
+  <a href="https://x.com/dris1153"><img src="https://img.shields.io/badge/@dris1153-000000?style=flat-square&logo=x&logoColor=white" alt="X / Twitter" /></a>
   <a href="https://dev.to/dris1153"><img src="https://img.shields.io/badge/dev.to-0A0A0A?style=flat-square&logo=devdotto&logoColor=white" alt="dev.to" /></a>
   <a href="https://orcid.org/0009-0003-8762-0607"><img src="https://img.shields.io/badge/ORCID-A6CE39?style=flat-square&logo=orcid&logoColor=white" alt="ORCID" /></a>
 </p>
