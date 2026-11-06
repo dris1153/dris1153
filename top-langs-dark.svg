@@ -208,9 +208,9 @@
           data-testid="lang-progress"
           x="248.44000000000003"
           y="0"
-          width="11.55"
+          width="11.56"
           height="8"
-          fill="#4F5D95"
+          fill="#3572A5"
         />
       
       
@@ -247,7 +247,7 @@
     <g class="stagger" style="animation-delay: 450ms">
       <circle cx="5" cy="6" r="5" fill="#dea584" />
       <text data-testid="lang-name" x="15" y="10" class='lang-name'>
-        Rust 3.80%
+        Rust 3.79%
       </text>
     </g>
   </g><g transform="translate(0, 25)">
@@ -266,9 +266,9 @@
     </g>
   </g><g transform="translate(0, 75)">
     <g class="stagger" style="animation-delay: 900ms">
-      <circle cx="5" cy="6" r="5" fill="#4F5D95" />
+      <circle cx="5" cy="6" r="5" fill="#3572A5" />
       <text data-testid="lang-name" x="15" y="10" class='lang-name'>
-        PHP 0.62%
+        Python 0.62%
       </text>
     </g>
   </g></g>
